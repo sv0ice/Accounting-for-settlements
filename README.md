@@ -1,0 +1,1 @@
+Accounting for settlements with suppliers and contractors. I helped calculate the total amount of each supplier separately
