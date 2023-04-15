@@ -15,7 +15,7 @@ public class AccountSettlement {
 
         try {
             // Чтение данных из файла
-            FileInputStream file = new FileInputStream("D:\\JavaProjects\\AccountSettlement\\src\\main\\java\\org\\example\\rawExcelFile.xlsx");
+            FileInputStream file = new FileInputStream("D:\\JavaProjects\\AccountSettlement\\src\\main\\java\\org\\example\\DOC-20230320-WA0015.xlsx");
             XSSFWorkbook workbook = new XSSFWorkbook(file);
             XSSFSheet sheet = workbook.getSheetAt(0);
             // XSSFRow row = sheet.getRow(0);
@@ -23,17 +23,26 @@ public class AccountSettlement {
             // String value = cell.getStringCellValue();
 
             // Чтение значения ячейки
-            Map<String, Double> states = new HashMap<String, Double>();
+            HashMap<String, Double> states = new HashMap<String, Double>();
             ArrayList<String> arrList = new ArrayList<>();
+            System.out.println("Enter name of the supplier: ");
+            Scanner sc = new Scanner(System.in);
+            String nameSupp = sc.nextLine();
+
             for(Row r : sheet) {
                 Cell cStr = r.getCell(3);
                 Cell cInt = r.getCell(4);
-                if(cStr != null & cInt != null) {
+                Cell cData = r.getCell(5);
+                Cell cStatus = r.getCell(2);
+
+                if(cStr != null & cInt != null & cStr.getStringCellValue().contains(nameSupp) & cStatus.getStringCellValue().contains("Принят от поставщика")) {
                     if(cStr.getCellType() == CellType.STRING & cInt.getCellType() == CellType.NUMERIC) {
                         if (states.containsKey(cStr.getStringCellValue())) {
+                            System.out.println(cStr.getStringCellValue() + " " +cInt.getNumericCellValue() + " | " + cData.getStringCellValue());
                             arrList.add(cStr.getStringCellValue());
                             states.put(cStr.getStringCellValue(),states.get(cStr.getStringCellValue()) + cInt.getNumericCellValue());
                         } else {
+                            System.out.println(cStr.getStringCellValue() + " " +cInt.getNumericCellValue() + " | " + cData.getStringCellValue());
                             states.put(cStr.getStringCellValue(), cInt.getNumericCellValue());
                         }
                     } else if(cStr.getCellType() == CellType.FORMULA && cStr.getCachedFormulaResultType() == CellType.NUMERIC && cInt.getCellType() == CellType.FORMULA && cInt.getCachedFormulaResultType() == CellType.NUMERIC) {
@@ -43,16 +52,17 @@ public class AccountSettlement {
                 }
             }
 
-            int size = 0;
+            int size = 1;
 
             for (String elem : arrList) {
 //                elem.contains("KENDALA IMPEX TOO") ? size++;
-                if (elem.contains("KENDALA IMPEX ТОО")) {
+                if (elem.contains(nameSupp)) {
                     size++;
                 }
             }
+            System.out.println("=========================================\n");
             System.out.println("Suppliers found by name: " + size);
-            System.out.println("Sum: " + states.get("KENDALA IMPEX ТОО"));
+            System.out.println("Sum: " + states.get(nameSupp));
             // Вывод данных в консоль
 //            System.out.println("Значение ячейки A1: " + value);
 //            System.out.println(values);
